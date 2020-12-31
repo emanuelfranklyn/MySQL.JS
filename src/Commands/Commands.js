@@ -16,7 +16,6 @@ function Get(resolve, reject, that, SearchString) {
 function CreateDataBase(resolve, reject, that, DataBaseName) {
     that.MysqlConnection.query('create database ' + DataBaseName + ';', (err, result)=>{
         if (err) reject(err);
-        console.log(result);
         resolve(result);
     });
 }
@@ -68,6 +67,14 @@ function DeleteTable (resolve, reject, that, TableName) {
     });
 }
 
+function Query(resolve, reject, that, Query) {
+    if (Query.substring(Query.length - 1) !== ';') {Query += ';';}
+    that.MysqlConnection.query(Query, (err, results)=>{
+        if (err) reject(err);
+        resolve(results);
+    });
+}
+
 module.exports = {
     Get,
     CreateDataBase,
@@ -76,4 +83,5 @@ module.exports = {
     GetTables,
     DeleteDatabase,
     DeleteTable,
+    Query,
 };

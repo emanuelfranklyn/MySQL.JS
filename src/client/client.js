@@ -162,6 +162,18 @@ class Client extends EventEmmiter {
         });
     }
 
+    Query(QueryString) {
+        return new Promise((resolve, reject) => {
+            if (this.isConnected()) {
+                Commands.Query(resolve, reject, this, QueryString);
+            } else {
+                this.on('Ready', () => {
+                    resolve(this.Query(QueryString));
+                });
+            }
+        });
+    }
+
     _ValidateOptions(Options = this.Options) {
         if (typeof Options.Debug !== 'boolean') {
             throw new TypeError('Debug value must be a boolean!');
