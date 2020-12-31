@@ -1,0 +1,30 @@
+{
+  "name": "mysql.js",
+  "version": "1.0.0",
+  "description": "A implementation of mysql commands as functions in javascript",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emanuelfranklyn/MySQL.JS.git"
+  },
+  "keywords": [
+    "Mysql",
+    "javascript"
+  ],
+  "author": "Space_Interprise",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/emanuelfranklyn/MySQL.JS/issues"
+  },
+  "homepage": "https://github.com/emanuelfranklyn/MySQL.JS#readme",
+  "devDependencies": {
+    "eslint": "^7.15.0",
+    "prettier": "2.2.1"
+  },
+  "dependencies": {
+    "mysql": "^2.18.1"
+  }
+}
