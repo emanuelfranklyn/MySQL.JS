@@ -41,12 +41,16 @@ function SwitchTo(resolve, reject, that, DatabaseName) {
 }
 
 function GetTables(resolve, reject, that) {
-    var ResultObject = [];
+    var ResultObject = {};
     that.MysqlConnection.query('show tables;', (err, results)=>{
         if (err) reject(err);
         results.forEach(element => {
             Object.values(element).forEach((key) => {
-                ResultObject.push(key);
+                ResultObject[key] = {
+                    Add: (...values) => {
+                        that.Add(key, values);
+                    },
+                };
             });
         });
         resolve(ResultObject);
@@ -75,6 +79,22 @@ function Query(resolve, reject, that, Query) {
     });
 }
 
+function Add(resolve, reject, that, TableName, values) {
+    that.MysqlConnection.query('describe ' + TableName + ';', (err, results)=>{
+        if (err) reject(err);
+        var ValuesNames = [];
+        results.forEach((element) => {
+            if (element.Extra !== 'auto_increment') {
+                ValuesNames.push(element.Field);
+            }
+        });
+        that.MysqlConnection.query('INSERT INTO ' + TableName + ' (' + ValuesNames.join(',') + ') VALUES (\'' + values.join('\', \'') + '\');', (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+    });
+}
+
 module.exports = {
     Get,
     CreateDataBase,
@@ -84,4 +104,5 @@ module.exports = {
     DeleteDatabase,
     DeleteTable,
     Query,
+    Add,
 };
