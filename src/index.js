@@ -1,5 +1,4 @@
-const Client = require('./client/client'); 
-
 module.exports = {
-    Client: Client,
+    Client: require('./client/client'),
+    ShardParser: require('./utils/ShardParser'),
 };
