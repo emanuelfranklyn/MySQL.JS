@@ -53,8 +53,8 @@ module.exports = {
     Add(TableName, ...Values) {
         return SendCommandToIndex('Add',TableName,Values);
     },
-    CreateDataBase(DataBaseName) {
-        return SendCommandToIndex('CreateDataBase', DataBaseName);
+    CreateDataBase(DataBaseName, createifnotexists) {
+        return SendCommandToIndex('CreateDataBase', DataBaseName, createifnotexists);
     },
     DeleteDatabase(DataBaseName) {
         return SendCommandToIndex('DeleteDatabase', DataBaseName);
@@ -74,8 +74,8 @@ module.exports = {
     Query(QueryString) {
         return SendCommandToIndex('Query', QueryString);
     },
-    SwitchTo(DataBaseName) {
-        return SendCommandToIndex('SwitchTo', DataBaseName);
+    SwitchTo(DataBaseName, createifnotexists) {
+        return SendCommandToIndex('SwitchTo', DataBaseName, createifnotexists);
     },
     isConnected() {
         return SendCommandToIndex('isConnected');

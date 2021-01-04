@@ -13,8 +13,9 @@ function Get(resolve, reject, that, SearchString) {
     });
 }
 
-function CreateDataBase(resolve, reject, that, DataBaseName) {
-    that.MysqlConnection.query('create database ' + DataBaseName + ';', (err, result)=>{
+function CreateDataBase(resolve, reject, that, DataBaseName, createifnotexists) {
+    if (createifnotexists !== false) {createifnotexists = true;}
+    that.MysqlConnection.query('CREATE DATABASE ' + (createifnotexists ? 'IF NOT EXISTS' : '') + DataBaseName + ';', (err, result)=>{
         if (err) reject(err);
         resolve(result);
     });
@@ -33,8 +34,8 @@ function GetDatabases(resolve, reject, that) {
     });
 }
 
-function SwitchTo(resolve, reject, that, DatabaseName) {
-    that.MysqlConnection.query('use ' + DatabaseName + ';', (err, results)=>{
+function SwitchTo(resolve, reject, that, DatabaseName, createifnotexists) {
+    that.MysqlConnection.query((createifnotexists ? 'CREATE DATABASE IF NOT EXISTS ' + DatabaseName + ';' : '') + 'use ' + DatabaseName + ';', (err, results)=>{
         if (err) reject(err);
         resolve(results);
     });

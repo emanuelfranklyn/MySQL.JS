@@ -90,13 +90,13 @@ class Client extends EventEmmiter {
         });
     }
 
-    CreateDataBase(DatabaseName) {
+    CreateDataBase(DatabaseName, createifnotexists) {
         return new Promise((resolve, reject) => {
             if (this.isConnected()) {
-                Commands.CreateDataBase(resolve, reject, this, DatabaseName);
+                Commands.CreateDataBase(resolve, reject, this, DatabaseName, createifnotexists);
             } else {
                 this.on('Ready', () => {
-                    resolve(this.CreateDataBase(DatabaseName));
+                    resolve(this.CreateDataBase(DatabaseName, createifnotexists));
                 });
             }
         });
@@ -114,13 +114,13 @@ class Client extends EventEmmiter {
         });
     }
 
-    SwitchTo(DatabaseName) {
+    SwitchTo(DatabaseName, createifnotexists) {
         return new Promise((resolve, reject) => {
             if (this.isConnected()) {
-                Commands.SwitchTo(resolve, reject, this, DatabaseName);
+                Commands.SwitchTo(resolve, reject, this, DatabaseName, createifnotexists);
             } else {
                 this.on('Ready', () => {
-                    resolve(this.SwitchTo(DatabaseName));
+                    resolve(this.SwitchTo(DatabaseName, createifnotexists));
                 });
             }
         });
