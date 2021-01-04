@@ -35,7 +35,7 @@ function GetDatabases(resolve, reject, that) {
 }
 
 function SwitchTo(resolve, reject, that, DatabaseName, createifnotexists) {
-    that.MysqlConnection.query((createifnotexists ? 'CREATE DATABASE IF NOT EXISTS ' + DatabaseName + ';' : '') + 'use ' + DatabaseName + ';', (err, results)=>{
+    that.MysqlConnection.query((createifnotexists ? 'CREATE DATABASE IF NOT EXISTS ' + DatabaseName + '; ' : '') + 'use ' + DatabaseName + ';', (err, results)=>{
         if (err) reject(err);
         resolve(results);
     });
