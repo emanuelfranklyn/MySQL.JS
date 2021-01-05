@@ -45,7 +45,7 @@ function SendCommandToIndex(CommandName, ...args) {
                 if (!Content.error) {
                     resolve(Content.Response);
                 } else {
-                    reject(Content.error);
+                    reject(JSON.parse(Content.error));
                 }
             }
         });
