@@ -2,6 +2,7 @@ function Get(resolve, reject, that, SearchString) {
     var ResultObject = [];
     that.MysqlConnection.query('SELECT * FROM ' + SearchString + ';', (err, results)=>{
         if (err) reject(err);
+        if (!results) reject('No content'); 
         results.forEach(element => {
             var ConvertingRawDataPacket = {};
             Object.keys(element).forEach((key, index) => {
