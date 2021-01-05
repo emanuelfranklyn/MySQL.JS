@@ -3,13 +3,17 @@ function Get(resolve, reject, that, SearchString) {
     that.MysqlConnection.query('SELECT * FROM ' + SearchString + ';', (err, results)=>{
         if (err) reject(err);
         if (typeof results !== 'object') reject('No content'); 
-        results.forEach(element => {
-            var ConvertingRawDataPacket = {};
-            Object.keys(element).forEach((key, index) => {
-                ConvertingRawDataPacket[key] = Object.values(element)[index];
+        try {
+            results.forEach(element => {
+                var ConvertingRawDataPacket = {};
+                Object.keys(element).forEach((key, index) => {
+                    ConvertingRawDataPacket[key] = Object.values(element)[index];
+                });
+                ResultObject.push(ConvertingRawDataPacket);
             });
-            ResultObject.push(ConvertingRawDataPacket);
-        });
+        } catch (e) {
+            reject(e);
+        }
         resolve(ResultObject);
     });
 }
