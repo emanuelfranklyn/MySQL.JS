@@ -42,7 +42,11 @@ function SendCommandToIndex(CommandName, ...args) {
         process.on('message', (Content) => {
             Content = JSON.parse(Content);
             if (Content.MasterEvalResponseId === Id) {
-                resolve(Content.Response);
+                if (!Content.error) {
+                    resolve(Content.Response);
+                } else {
+                    reject(Content.error);
+                }
             }
         });
     });
