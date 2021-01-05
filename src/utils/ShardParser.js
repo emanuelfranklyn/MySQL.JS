@@ -39,7 +39,8 @@ function SendCommandToIndex(CommandName, ...args) {
         setTimeout(()=>{
             reject('No Response');
         }, 20000);
-        process.on('message', (Content) => {
+        function MessageParser(Content) {
+            process.removeListener('message', MessageParser);
             Content = JSON.parse(Content);
             if (Content.MasterEvalResponseId === Id) {
                 if (!Content.error) {
@@ -48,7 +49,8 @@ function SendCommandToIndex(CommandName, ...args) {
                     reject(JSON.parse(Content.error));
                 }
             }
-        });
+        }
+        process.on('message', MessageParser);
     });
 }
 
