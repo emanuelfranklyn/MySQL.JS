@@ -91,17 +91,50 @@ function Query(resolve, reject, that, Query) {
 }
 
 function Add(resolve, reject, that, TableName, values) {
+
     that.MysqlConnection.query('describe ' + TableName + ';', (err, results)=>{
         if (err) reject(err);
         var ValuesNames = [];
+        var IndexValue;
         results.forEach((element) => {
             if (element.Extra !== 'auto_increment') {
                 ValuesNames.push(element.Field);
+            } else {
+                IndexValue = element.Field;
             }
         });
-        that.MysqlConnection.query('INSERT INTO ' + TableName + ' (' + ValuesNames.join(',') + ') VALUES (\'' + values.join('\', \'') + '\');', (err, results) => {
-            if (err) reject(err);
-            resolve(results);
+        var ValueAlreadExists = false;
+        var ValueIndex = -1;
+        that.MysqlConnection.query('SELECT * FROM ' + TableName + ';', (err, results) => {
+            results.forEach((Content, Cindex) => {
+                ValuesNames.forEach((ValueN, index) => {
+                    if (Content[ValueN] === values[index]) {
+                        ValueAlreadExists = true;
+                        ValueIndex = Cindex;
+                    }
+                });
+            });
+            if (ValueAlreadExists) {
+                var ContentString = '';
+                ValuesNames.forEach((ValueN, index) => {
+                    if (index === ValuesNames.length - 1) {
+                        ContentString += ValueN + '="' + values[index] + '"';
+                    } else {
+                        ContentString += ValueN + '="' + values[index] + '",';
+                    }
+                });
+                // eslint-disable-next-line max-len
+                that.MysqlConnection.query('UPDATE ' + TableName + ' SET ' + ContentString + ' WHERE ' + IndexValue + '=' + ValueIndex + ';', (err, results) => {
+                    if (err) reject(err);
+                    resolve(results);
+                });
+            } else {
+                // eslint-disable-next-line max-len
+                that.MysqlConnection.query('INSERT INTO ' + TableName + ' (' + ValuesNames.join(',') + ') VALUES (\'' + values.join('\', \'') + '\');', (err, results) => {
+                    if (err) reject(err);
+                    resolve(results);
+                });
+            }
         });
     });
 }
