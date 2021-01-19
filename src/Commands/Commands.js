@@ -92,11 +92,11 @@ function Query(resolve, reject, that, Query) {
 
 function Add(resolve, reject, that, TableName, values) {
 
-    that.MysqlConnection.query('describe ' + TableName + ';', (err, results)=>{
+    that.MysqlConnection.query('describe ' + TableName + ';', async (err, results)=>{
         if (err) reject(err);
         var ValuesNames = [];
         var IndexValue;
-        results.forEach((element) => {
+        await results.forEach((element) => {
             if (element.Extra !== 'auto_increment') {
                 ValuesNames.push(element.Field);
             } else {
@@ -105,8 +105,8 @@ function Add(resolve, reject, that, TableName, values) {
         });
         var ValueAlreadExists = false;
         var ValueIndex = -1;
-        that.MysqlConnection.query('SELECT * FROM ' + TableName + ';', (err, results) => {
-            results.forEach((Content, Cindex) => {
+        that.MysqlConnection.query('SELECT * FROM ' + TableName + ';', async (err, results) => {
+            await results.forEach((Content, Cindex) => {
                 ValuesNames.forEach((ValueN, index) => {
                     if (Content[ValueN] === values[index]) {
                         ValueAlreadExists = true;
@@ -116,7 +116,7 @@ function Add(resolve, reject, that, TableName, values) {
             });
             if (ValueAlreadExists) {
                 var ContentString = '';
-                ValuesNames.forEach((ValueN, index) => {
+                await ValuesNames.forEach((ValueN, index) => {
                     if (index === ValuesNames.length - 1) {
                         ContentString += ValueN + '="' + values[index] + '"';
                     } else {
