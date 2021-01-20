@@ -97,6 +97,7 @@ function Add(resolve, reject, that, TableName, values) {
         var ValuesNames = [];
         var IndexValue;
         await results.forEach((element) => {
+            console.log(element);
             if (element.Extra !== 'auto_increment') {
                 ValuesNames.push(element.Field);
             } else {
@@ -123,11 +124,15 @@ function Add(resolve, reject, that, TableName, values) {
                         ContentString += ValueN + '="' + values[index] + '",';
                     }
                 });
-                // eslint-disable-next-line max-len
-                that.MysqlConnection.query('UPDATE ' + TableName + ' SET ' + ContentString + ' WHERE ' + IndexValue + '=' + ValueIndex + ';', (err, results) => {
-                    if (err) reject(err);
-                    resolve(results);
-                });
+                if (!IndexValue) {
+                    // eslint-disable-next-line max-len
+                    console.log('Couldn\'t add value because it already exists and the table doesn\'t contains a auto_increment value so it cannot update the value!');
+                } else {
+                    that.MysqlConnection.query('UPDATE ' + TableName + ' SET ' + ContentString + ' WHERE ' + IndexValue + '=' + ValueIndex + ';', (err, results) => {
+                        if (err) reject(err);
+                        resolve(results);
+                    });
+                }
             } else {
                 // eslint-disable-next-line max-len
                 that.MysqlConnection.query('INSERT INTO ' + TableName + ' (' + ValuesNames.join(',') + ') VALUES (\'' + values.join('\', \'') + '\');', (err, results) => {
