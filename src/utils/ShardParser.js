@@ -40,9 +40,9 @@ function SendCommandToIndex(CommandName, ...args) {
             reject('No Response');
         }, 20000);
         function MessageParser(Content) {
-            process.removeListener('message', MessageParser);
             Content = JSON.parse(Content);
             if (Content.MasterEvalResponseId === Id) {
+                process.removeListener('message', MessageParser);
                 if (!Content.error) {
                     resolve(Content.Response);
                 } else {
