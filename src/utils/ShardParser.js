@@ -38,9 +38,9 @@ function SendCommandToIndex(CommandName, ...args) {
         client.send({MasterEval: true, EvalCommand: CommandName, Id: Id});
         setTimeout(()=>{
             reject('No Response');
-        }, 20000);
+        }, 10000);
         function MessageParser(Content) {
-            if (typeof(Content) === 'object') {
+            if (typeof(Content) === 'string' && Content.startsWith('{') && Content.startsWith('}')) {
                 Content = JSON.parse(Content);
                 if (Content.MasterEvalResponseId === Id) {
                     process.removeListener('message', MessageParser);
