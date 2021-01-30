@@ -40,15 +40,14 @@ function SendCommandToIndex(CommandName, ...args) {
             reject('No Response');
         }, 10000);
         function MessageParser(Content) {
-            if (typeof(Content) === 'string' && Content.startsWith('{') && Content.startsWith('}')) {
-                Content = JSON.parse(Content);
-                if (Content.MasterEvalResponseId === Id) {
-                    process.removeListener('message', MessageParser);
-                    if (!Content.error) {
-                        resolve(Content.Response);
-                    } else {
-                        reject(JSON.parse(Content.error));
-                    }
+            Content = JSON.parse(Content);
+            if (!Content) {return;}
+            if (Content.MasterEvalResponseId === Id) {
+                process.removeListener('message', MessageParser);
+                if (!Content.error) {
+                    resolve(Content.Response);
+                } else {
+                    reject(JSON.parse(Content.error));
                 }
             }
         }
