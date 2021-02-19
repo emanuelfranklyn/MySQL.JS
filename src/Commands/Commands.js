@@ -1,6 +1,8 @@
+const mysql = require('mysql');
+
 function Get(resolve, reject, that, SearchString) {
     var ResultObject = [];
-    that.MysqlConnection.query('SELECT * FROM ' + SearchString + ';', (err, results)=>{
+    that.MysqlConnection.query('SELECT * FROM ' + mysql.escapeId(SearchString) + ';', (err, results)=>{
         if (err) reject(err);
         if (typeof results !== 'object') reject('No content'); 
         try {
@@ -20,7 +22,7 @@ function Get(resolve, reject, that, SearchString) {
 
 function CreateDataBase(resolve, reject, that, DataBaseName, createifnotexists) {
     if (createifnotexists !== false) {createifnotexists = true;}
-    that.MysqlConnection.query('CREATE DATABASE ' + (createifnotexists ? 'IF NOT EXISTS' : '') + DataBaseName + ';', (err, result)=>{
+    that.MysqlConnection.query('CREATE DATABASE ' + (createifnotexists ? 'IF NOT EXISTS' : '') + mysql.escapeId(DataBaseName) + ';', (err, result)=>{
         if (err) reject(err);
         resolve(result);
     });
@@ -41,11 +43,11 @@ function GetDatabases(resolve, reject, that) {
 
 function SwitchTo(resolve, reject, that, DatabaseName, createifnotexists) {
     if (createifnotexists) { 
-        that.MysqlConnection.query('CREATE DATABASE IF NOT EXISTS ' + DatabaseName + ';', (err)=>{
+        that.MysqlConnection.query('CREATE DATABASE IF NOT EXISTS ' + mysql.escapeId(DatabaseName) + ';', (err)=>{
             if (err) reject(err);
         });
     }
-    that.MysqlConnection.query('use ' + DatabaseName + ';', (err, results)=>{
+    that.MysqlConnection.query('use ' + mysql.escapeId(DatabaseName) + ';', (err, results)=>{
         if (err) reject(err);
         resolve(results);
     });
@@ -69,14 +71,14 @@ function GetTables(resolve, reject, that) {
 }
 
 function DeleteDatabase(resolve, reject, that, DatabaseName) {
-    that.MysqlConnection.query('drop database ' + DatabaseName + ';', (err, results)=>{
+    that.MysqlConnection.query('drop database ' + mysql.escapeId(DatabaseName) + ';', (err, results)=>{
         if (err) reject(err);
         resolve(results);
     });
 }
 
 function DeleteTable (resolve, reject, that, TableName) {
-    that.MysqlConnection.query('drop table ' + TableName + ';', (err, results)=>{
+    that.MysqlConnection.query('drop table ' + mysql.escapeId(TableName) + ';', (err, results)=>{
         if (err) reject(err);
         resolve(results);
     });
@@ -92,7 +94,7 @@ function Query(resolve, reject, that, Query) {
 
 function Add(resolve, reject, that, TableName, values) {
 
-    that.MysqlConnection.query('describe ' + TableName + ';', async (err, results)=>{
+    that.MysqlConnection.query('describe ' + mysql.escapeId(TableName) + ';', async (err, results)=>{
         if (err) reject(err);
         var ValuesNames = [];
         var IndexValue;
@@ -105,7 +107,7 @@ function Add(resolve, reject, that, TableName, values) {
         });
         var ValueAlreadExists = false;
         var ValueIndex = -1;
-        that.MysqlConnection.query('SELECT * FROM ' + TableName + ';', async (err, results) => {
+        that.MysqlConnection.query('SELECT * FROM ' + mysql.escapeId(TableName) + ';', async (err, results) => {
             await results.forEach((Content, Cindex) => {
                 ValuesNames.forEach((ValueN, index) => {
                     if (Content[ValueN] === values[index]) {
@@ -128,14 +130,15 @@ function Add(resolve, reject, that, TableName, values) {
                     console.log('Couldn\'t add value because it already exists and the table doesn\'t contains a auto_increment value so it cannot update the value!');
                 } else {
                     ValueIndex++;
-                    that.MysqlConnection.query('UPDATE ' + TableName + ' SET ' + ContentString + ' WHERE ' + IndexValue + '=' + ValueIndex + ';', (err, results) => {
+                    // eslint-disable-next-line max-len
+                    that.MysqlConnection.query('UPDATE ' + mysql.escapeId(TableName) + ' SET ' + mysql.escapeId(ContentString) + ' WHERE ' + mysql.escapeId(IndexValue) + '=' + mysql.escape(ValueIndex) + ';', (err, results) => {
                         if (err) reject(err);
                         resolve(results);
                     });
                 }
             } else {
                 // eslint-disable-next-line max-len
-                that.MysqlConnection.query('INSERT INTO ' + TableName + ' (' + ValuesNames.join(',') + ') VALUES (\'' + values.join('\', \'') + '\');', (err, results) => {
+                that.MysqlConnection.query('INSERT INTO ' + mysql.escapeId(TableName) + ' (' + mysql.escapeId(ValuesNames.join(',')) + ') VALUES (\'' + mysql.escape(values.join('\', \'')) + '\');', (err, results) => {
                     if (err) reject(err);
                     resolve(results);
                 });
