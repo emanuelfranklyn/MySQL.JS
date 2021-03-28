@@ -90,13 +90,11 @@ function Query(resolve, reject, that, Query) {
     that.MysqlConnection.query(Query, (err, results)=>{
         if (err) reject(err);
         results.forEach(element => {
-            Object.values(element).forEach((key) => {
-                ResultObject[key] = {
-                    Add: (...values) => {
-                        that.Add(key, values);
-                    },
-                };
+            var ConvertingRawDataPacket = {};
+            Object.keys(element).forEach((key, index) => {
+                ConvertingRawDataPacket[key] = Object.values(element)[index];
             });
+            ResultObject.push(ConvertingRawDataPacket);
         });
         resolve(ResultObject);
     });
