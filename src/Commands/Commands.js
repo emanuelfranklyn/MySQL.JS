@@ -85,10 +85,20 @@ function DeleteTable (resolve, reject, that, TableName) {
 }
 
 function Query(resolve, reject, that, Query) {
+    var ResultObject = {};
     if (Query.substring(Query.length - 1) !== ';') {Query += ';';}
     that.MysqlConnection.query(Query, (err, results)=>{
         if (err) reject(err);
-        resolve(results);
+        results.forEach(element => {
+            Object.values(element).forEach((key) => {
+                ResultObject[key] = {
+                    Add: (...values) => {
+                        that.Add(key, values);
+                    },
+                };
+            });
+        });
+        resolve(ResultObject);
     });
 }
 
